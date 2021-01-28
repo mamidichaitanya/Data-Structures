@@ -2,8 +2,11 @@ package com.java.graphs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Stack;
 
 //Directed Graph
 public class Graph {
@@ -93,6 +96,57 @@ public class Graph {
     adjacencyList.get(fromNode).remove(toNode);
   }
 
+  public void traverseDepthFirst(String root) {
+    HashSet visitedNodes = new HashSet();
+    Node node = nodes.get(root);
+    if (node == null) {
+      return;
+    }
+    traverseDepthFirstWithRecursion(node, visitedNodes);
+  }
+
+  // recursive traversal
+  private void traverseDepthFirstWithRecursion(Node root, HashSet visitedNodes) {
+    //visited nodes
+    System.out.println(root);
+    visitedNodes.add(root);
+
+    for (Node node : adjacencyList.get(root)) {
+      if (!visitedNodes.contains(node)) {
+        traverseDepthFirstWithRecursion(node, visitedNodes);
+      }
+    }
+  }
+
+  // iterative traversal using stack
+  private void traverseDepthFirstWithInIteration(String root) {
+
+    Node node = nodes.get(root);
+    if (node == null) {
+      return;
+    }
+    Set<Node> visited = new HashSet<>();
+    Stack<Node> stack = new Stack<>();
+    stack.push(node);
+
+    while ((!stack.empty())) {
+      Node currentNode = stack.pop();
+
+      if (visited.contains(currentNode)) {
+        continue;
+      }
+      System.out.println(currentNode);
+      visited.add(currentNode);
+
+      for (Node neighbour : adjacencyList.get(currentNode)) {
+        if (!visited.contains(neighbour)) {
+          stack.push(neighbour);
+        }
+      }
+    }
+
+  }
+
   //Lets test it
   public static void main(String q[]) {
     Graph graph = new Graph();
@@ -102,9 +156,16 @@ public class Graph {
     graph.addNode("D");
 
     graph.addEdge("A", "B");
-    graph.addEdge("B", "C");
-    graph.addEdge("A", "D");
+    graph.addEdge("B", "D");
+    graph.addEdge("D", "C");
+    graph.addEdge("A", "C");
 
     graph.print();
+
+    System.out.println("====DFS using recursion=====");
+    graph.traverseDepthFirst("A");
+    System.out.println("====DFS using iterative(stack)=====");
+    graph.traverseDepthFirstWithInIteration("A");
+
   }
 }
